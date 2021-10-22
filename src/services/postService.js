@@ -79,7 +79,35 @@ const getOne = async (id) => {
 
 const create = async (data) => {
     try {
-        const response = [];
+        const { title, content, image, category_id } = data;
+
+        // Verificar si existe otra entrada con el mismo titulo
+        const post = await Post.findOne({
+            where: {
+                title: title
+            }
+        });
+
+        // Si ya existe dicho titulo, devuelve error
+        if (post != null) {
+            const error = new Error(`Ya existe otro post con el titulo: ${title}`);
+            error.status = 409;
+            throw error;
+        }
+
+        // si se proporciona category_id, verificar que existe. Si no existe devuelve error.
+        if (category_id) {
+            const category = await Category.findByPk(category_id);
+
+            if (category == null) {
+                const error = new Error(`No existe la categoria ${category_id}`);
+                error.status = 404;
+                throw error;
+            }
+        }
+
+        // Si tod OK, instertar nueva entrada en la tabla
+        const response = await Post.create({ title: title, content: content, image: image, category_id: category_id });
 
         return response;
     } catch (error) {

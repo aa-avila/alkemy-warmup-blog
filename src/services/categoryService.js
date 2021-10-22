@@ -6,8 +6,13 @@ const { Op } = require("sequelize");
 
 const getAll = async () => {
     try {
-        const response = [];
-        
+        // Traer todos los registros, excluir campos createdAt y UpdatedAt
+        const response = await Category.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt'],
+            }
+        });
+
         return response;
     } catch (error) {
         throw error;
@@ -16,8 +21,28 @@ const getAll = async () => {
 
 const getOne = async (id) => {
     try {
-        const response = [];
-      
+        // Trae el registro cuyo id coincida con el de la solicitud
+        const response = await Category.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Post,
+                as: 'posts',
+                attributes: {
+                    exclude: ['category_id', 'content', 'createdAt', 'updatedAt']
+                }
+            }]
+        });
+
+        // Arroja error en caso de que no se encuentre dicho id
+        if (response === null) {
+            const error = new Error(`No se encuentra la categoria ${id}.`);
+            error.status = 404;
+            throw error;
+        }
+
+
         return response;
     } catch (error) {
         throw error;
@@ -27,7 +52,7 @@ const getOne = async (id) => {
 const create = async (data) => {
     try {
         const response = [];
-       
+
         return response;
     } catch (error) {
         throw error;

@@ -3,8 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 
-// const categoryRoutes = require('./routes/categoryRoutes');
-// const postRoutes = require('./routes/postRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const postRoutes = require('./routes/postRoutes');
 
 
 /*********************/
@@ -29,8 +29,8 @@ app.get('/', (req, res) => {
     res.send('Hola!');
 });
 
-// app.use('/', categoryRoutes);
-// app.use('/', postRoutes);
+app.use('/', categoryRoutes);
+app.use('/', postRoutes);
 
 
 /*********************/

@@ -63,7 +63,7 @@ const create = async (data) => {
 
         // Si ya existe dicha categoria, devuelve error
         if (genre != null) {
-            const error = new Error(`La categgoria ${name} ya existe.`);
+            const error = new Error(`La categoria ${name} ya existe.`);
             error.status = 409;
             throw error;
         }

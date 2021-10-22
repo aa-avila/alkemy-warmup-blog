@@ -51,7 +51,25 @@ const getOne = async (id) => {
 
 const create = async (data) => {
     try {
-        const response = [];
+        const name = data.name.toUpperCase();
+        const image = data.image;
+
+        // Verificar si existe otro nombre igual
+        const genre = await Category.findOne({
+            where: {
+                name: name
+            }
+        });
+
+        // Si ya existe dicha categoria, devuelve error
+        if (genre != null) {
+            const error = new Error(`La categgoria ${name} ya existe.`);
+            error.status = 409;
+            throw error;
+        }
+
+        // Si no existe previamente, insertar la nueva categoria en la tabla
+        const response = await Category.create({ name: name, image: image });
 
         return response;
     } catch (error) {

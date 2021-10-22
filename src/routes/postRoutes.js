@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const PostCtrl = require('../controllers/postController');
 
-//router.get('/posts', PostCtrl.getAll);
+router.get('/posts', PostCtrl.getAll);
 // router.get('/posts/:id', PostCtrl.getOne);
 // router.post('/posts', PostCtrl.create);
 // router.put('/posts/:id', PostCtrl.update);

@@ -78,10 +78,43 @@ const create = async (data) => {
 }
 
 const update = async (id, data) => {
-    try {
-        const response = [];
 
-        return (response);
+    try {
+        const name = data.name.toUpperCase();
+        const image = data.image;
+
+        // Verificar si existe la categoria antes de hacer el update
+        // si no existe, arroja error:
+        const categoryToUpdate = await Category.findByPk(id);
+
+        if (!categoryToUpdate) {
+            const error = new Error(`La categoria ${id} no existe.`);
+            error.status = 404;
+            throw error;
+        }
+
+        // Si existe, actualiza BD
+        await Category.update({ name: name, image: image }, {
+            where: {
+                id: id
+            }
+        });
+
+        // Traemos la entrada actuallizada y la enviamos como respuesta
+        const category = await Category.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Post,
+                as: 'posts',
+                attributes: {
+                    exclude: ['category_id', 'content', 'createdAt', 'updatedAt']
+                }
+            }]
+        });
+
+        return (category);
     } catch (error) {
         throw error;
     }

@@ -50,7 +50,26 @@ const getAll = async (order) => {
 
 const getOne = async (id) => {
     try {
-        const response = [];
+         // Trae el registro cuyo id coincida con el de la solicitud
+         const response = await Post.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Category,
+                // as: 'category_id',
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            }]
+        });
+
+        // Arroja error en caso de que no se encuentre dicho id
+        if (response === null) {
+            const error = new Error(`No se encuentra el post ${id}.`);
+            error.status = 404;
+            throw error;
+        }
 
         return response;
     } catch (error) {

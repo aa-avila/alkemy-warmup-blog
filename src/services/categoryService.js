@@ -122,9 +122,39 @@ const update = async (id, data) => {
 
 const deleteOne = async (id) => {
     try {
-        const response = [];
+        // Verificar si existen posts relacionados a la categoria que se quiere borrar
+        const relatedPosts = await Post.findAll({
+            where: {
+                category_id: id
+            }
+        })
 
-        return response;
+        // Si hay relacionados, no permite borrar y genera error
+        if (relatedPosts.length != 0) {
+            const error = new Error(`No se puede eliminar la categoria ${id} ya que existen posts asociados.`);
+            error.status = 409;
+            throw error;
+        }
+
+        // Si no hay posts relacionados, se procede a eliminar la entrada
+        const response = await Category.destroy({
+            where: {
+                id: id
+            }
+        });
+
+        // Si la query arroja "0" no se eliminó ninguna entrada => asumimos que dicho id no existe. Error.
+        if (response == 0) {
+            const error = new Error(`No se encuentra la categoria ${id}.`);
+            error.status = 404;
+            throw error;
+        }
+
+        // Respuesta 1 => se eliminó 1 entrada
+        const msg = { "Message": `La categoria ${id} se elimino correctamente.` };
+
+        return msg;
+
     } catch (error) {
         throw error;
     }

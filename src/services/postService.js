@@ -55,6 +55,9 @@ const getOne = async (id) => {
             where: {
                 id: id
             },
+            attributes: {
+                exclude: ['category_id'],
+            },
             include: [{
                 model: Category,
                 // as: 'category_id',

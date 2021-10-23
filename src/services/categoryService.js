@@ -4,6 +4,8 @@ const Category = require('../models/categoryModel');
 const Post = require('../models/postModel');
 const { Op } = require("sequelize");
 
+const isImageURL = require('image-url-validator').default;
+
 const getAll = async () => {
     try {
         // Traer todos los registros, excluir campos createdAt y UpdatedAt
@@ -68,7 +70,18 @@ const create = async (data) => {
             throw error;
         }
 
-        // Si no existe previamente, insertar la nueva categoria en la tabla
+        // Si se proporciona image, verificar que existe y se trata de una imagen
+        if (image != null) {
+            const imgValid = await isImageURL(image);
+            
+            if (!imgValid) {
+                const error = new Error(`La url proporcionada no es valida o no contiene un archivo de imagen: ${image}`);
+                error.status = 418;
+                throw error;
+            }
+        }
+
+        // Si todo OK, insertar la nueva categoria en la tabla
         const response = await Category.create({ name: name, image: image });
 
         return response;

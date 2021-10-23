@@ -4,6 +4,8 @@ const Post = require('../models/postModel');
 const Category = require('../models/categoryModel');
 const { Op } = require("sequelize");
 
+const isImageURL = require('image-url-validator').default;
+
 
 const getAll = async (order) => {
     try {
@@ -105,6 +107,17 @@ const create = async (data) => {
             if (category == null) {
                 const error = new Error(`No existe la categoria ${category_id}`);
                 error.status = 404;
+                throw error;
+            }
+        }
+
+        // Si se proporciona image, verificar que existe y se trata de una imagen
+        if (image != null) {
+            const imgValid = await isImageURL(image);
+            
+            if (!imgValid) {
+                const error = new Error(`La url proporcionada no es valida o no contiene un archivo de imagen: ${image}`);
+                error.status = 418;
                 throw error;
             }
         }

@@ -99,6 +99,9 @@ const update = async (id, data) => {
             throw error;
         }
 
+        // Si se proporciona image, validar
+        await imgValidator(image);
+
         // Si existe, actualiza BD
         await Category.update({ name: name, image: image }, {
             where: {

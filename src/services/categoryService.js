@@ -4,6 +4,9 @@ const Category = require('../models/categoryModel');
 const Post = require('../models/postModel');
 const { Op } = require("sequelize");
 
+const imgValidator = require('../helpers/imgValidator');
+
+
 const getAll = async () => {
     try {
         // Traer todos los registros, excluir campos createdAt y UpdatedAt
@@ -68,7 +71,10 @@ const create = async (data) => {
             throw error;
         }
 
-        // Si no existe previamente, insertar la nueva categoria en la tabla
+        // Si se proporciona image, validar
+        await imgValidator(image);
+
+        // Si todo OK, insertar la nueva categoria en la tabla
         const response = await Category.create({ name: name, image: image });
 
         return response;
@@ -92,6 +98,9 @@ const update = async (id, data) => {
             error.status = 404;
             throw error;
         }
+
+        // Si se proporciona image, validar
+        await imgValidator(image);
 
         // Si existe, actualiza BD
         await Category.update({ name: name, image: image }, {

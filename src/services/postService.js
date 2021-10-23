@@ -102,7 +102,7 @@ const create = async (data) => {
 
         // si se proporciona category_id, verificar que existe. Si no existe devuelve error.
         if (category_id) {
-            const category = await Post.findByPk(category_id);
+            const category = await Category.findByPk(category_id);
 
             if (category == null) {
                 const error = new Error(`No existe la categoria ${category_id}`);

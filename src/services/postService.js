@@ -4,6 +4,8 @@ const Post = require('../models/postModel');
 const Category = require('../models/categoryModel');
 const { Op } = require("sequelize");
 
+const imgValidator = require('../helpers/imgValidator');
+
 
 const getAll = async (order) => {
     try {
@@ -109,7 +111,10 @@ const create = async (data) => {
             }
         }
 
-        // Si tod OK, instertar nueva entrada en la tabla
+        // Si se proporciona image, validar
+        await imgValidator(image);
+
+        // Si todo OK, instertar nueva entrada en la tabla
         const response = await Post.create({ title: title, content: content, image: image, category_id: category_id });
 
         return response;
@@ -145,6 +150,9 @@ const update = async (id, data) => {
             }
         }
 
+        // Si se proporciona image, validar
+        await imgValidator(image);
+
         // Si todo OK, actualiza BD
         await Post.update({ title: title, content: content, image: image, category_id }, {
             where: {
@@ -177,8 +185,8 @@ const update = async (id, data) => {
 
 const deleteOne = async (id) => {
     try {
-         // Checkear si el registro que se quiere borrar existe. Si no, Error.
-         const postToDelete = await Post.findOne({
+        // Checkear si el registro que se quiere borrar existe. Si no, Error.
+        const postToDelete = await Post.findOne({
             where: {
                 id: id
             }
@@ -198,7 +206,7 @@ const deleteOne = async (id) => {
         });
 
         const msg = { "Message": `El post ${id} se elimino correctamente.` };
-        
+
         return msg;
     } catch (error) {
         throw error;

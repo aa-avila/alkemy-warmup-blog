@@ -50,8 +50,8 @@ const getAll = async (order) => {
 
 const getOne = async (id) => {
     try {
-         // Trae el registro cuyo id coincida con el de la solicitud
-         const response = await Post.findOne({
+        // Trae el registro cuyo id coincida con el de la solicitud
+        const response = await Post.findOne({
             where: {
                 id: id
             },
@@ -100,7 +100,7 @@ const create = async (data) => {
 
         // si se proporciona category_id, verificar que existe. Si no existe devuelve error.
         if (category_id) {
-            const category = await Category.findByPk(category_id);
+            const category = await Post.findByPk(category_id);
 
             if (category == null) {
                 const error = new Error(`No existe la categoria ${category_id}`);
@@ -120,9 +120,56 @@ const create = async (data) => {
 
 const update = async (id, data) => {
     try {
-        const response = [];
+        const { title, content, image, category_id } = data;
 
-        return response;
+        // Verificar si existe el post antes de hacer el update
+        // si no existe, arroja error:
+        const postToUpdate = await Post.findByPk(id);
+
+        if (!postToUpdate) {
+            const error = new Error(`El post ${id} no existe.`);
+            error.status = 404;
+            throw error;
+        }
+
+        // Si se envio categoria,
+        // Verificar si existe la categoria antes de hacer el update,
+        // si no existe, arroja error:
+        if (category_id != null) {
+            const categoryToUpdate = await Category.findByPk(category_id);
+
+            if (!categoryToUpdate) {
+                const error = new Error(`La categoria ${category_id} no existe.`);
+                error.status = 404;
+                throw error;
+            }
+        }
+
+        // Si todo OK, actualiza BD
+        await Post.update({ title: title, content: content, image: image, category_id }, {
+            where: {
+                id: id
+            }
+        });
+
+        // Traemos la entrada actuallizada y la enviamos como respuesta
+        const post = await Post.findOne({
+            where: {
+                id: id
+            },
+            attributes: {
+                exclude: ['category_id'],
+            },
+            include: [{
+                model: Category,
+                // as: 'category_id',
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            }]
+        });
+
+        return (post);
     } catch (error) {
         throw error;
     }

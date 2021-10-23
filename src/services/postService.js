@@ -177,9 +177,29 @@ const update = async (id, data) => {
 
 const deleteOne = async (id) => {
     try {
-        const response = [];
+         // Checkear si el registro que se quiere borrar existe. Si no, Error.
+         const postToDelete = await Post.findOne({
+            where: {
+                id: id
+            }
+        });
 
-        return response;
+        if (!postToDelete) {
+            const error = new Error(`No se encuentra el post ${id}.`);
+            error.status = 404;
+            throw error;
+        }
+
+        // Si existe, se procede a eliminar la entrada
+        const response = await Post.destroy({
+            where: {
+                id: id
+            }
+        });
+
+        const msg = { "Message": `El post ${id} se elimino correctamente.` };
+        
+        return msg;
     } catch (error) {
         throw error;
     }

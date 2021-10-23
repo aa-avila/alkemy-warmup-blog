@@ -37,3 +37,28 @@ De manera opcional, se puede iniciar el servidor con *nodemon* con el siguiente 
 npm run dev
 
 ```
+## Endpoints
+### Posts
+- getAll
+    GET: /posts
+        params (optional): order = ASC || DESC
+- getOne
+    GET: /posts/:id
+- create
+    POST: /posts
+- update
+    PATCH: /posts/:id
+- deleteOne
+    DELETE: /posts/:id
+
+### Categories
+- getAll
+    GET: /categories
+- getOne
+    GET: /categories/:id
+- create
+    POST: /categories
+- update
+    PATCH: /categories/:id
+- deleteOne
+    DELETE: /categories/:id
